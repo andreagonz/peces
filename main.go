@@ -1,6 +1,8 @@
 package main
 
-//import 
+import(
+	h "github.com/andreagonz/peces/heuristica"
+)
 
 func main() {
 	

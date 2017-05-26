@@ -7,46 +7,55 @@ import (
 type Pez interface {
 	ObtenPeso() float64
 	ObtenPosicion() float64
-	Aleatorio(*rand.Rand) Pez
-	CalculaFit()
+	CalculaFitness()
 	ObtenFitness() float64
+	AsignarFitness()
 }
 
 type Cardumen interface {
-	Peces []Pez
-	Baricentro int
+ 	ObtenPeces() []Pez
+	ObtenBaricentro() int
 	CondicionParo() bool
+	InicializarCardumen()
 }
 
 func MovimientoIndividual(c * Cardumen) {
 	a := 0
 	b := 0
 	for x := 0; x < len((*c).Peces) - 1; x++ {
-		df := ((c*).Peces[x].Fitness - (c*).Peces[x + 1].Fitness)
-		a += ((c*).Peces[x].Posicion - (c*).Peces[x + 1].Posicion) * df
+		df := (*c).Peces[x].Fitness - (c*).Peces[x + 1].ObtenFitness()
+		a += (*c).Peces[x].ObtenPosicion() - (c*).Peces[x + 1].ObtenPosicion()) * df
 		b += df
 	}
 	i := a / b
-	for x := 0; x < len((*c).Peces); x++ {	
-		(c*).Peces[x] += i
+	for x := 0; x < len((*c).ObtenPeces); x++ {	
+		pez := (c*).ObtenPeces[x]
+		pez.AsignarFitness(pez.ObtenFitness() + i)
 	}
 }
 
-func InicializarCardumen(c * Cardumen, t int, r * rand.Rand) {
-	(*c).Peces = make([]Pez, t)
-	for i := 0; i < t; i++ {
-		p := Pez{}
-		p = p.Aleatorio(r)
-		p.CalculaFit()
-		(*c).Peces[i] = p
-	}
+func CalculaBaricentro(c * Cardumen) {
+	c.baricentro = 0
+}
+
+func AlimentaPeces(c * Cardumen) {
+}
+
+func MovColectivoIns(c * Cardumen) {
+}
+
+func MovColectivoVol(c * Cardumen) {
+	
 }
 
 func FSS(seed int, t int) {
 	c := Cardumen{}
 	r := rand.New(rand.NewSource(seed))	
-	InicializarCardumen(*c, t, r)
+	InicializarCardumen(&c, t, r)
 	for !c.CondicionParo() {
-		
+		MovimientoIndividual(&c)
+		AlimentaPeces(&c)
+		MovColectivoIns(&c)
+		MovColectivoVol(&c)
 	}
 }
