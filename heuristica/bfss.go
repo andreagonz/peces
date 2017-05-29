@@ -8,7 +8,6 @@ import (
 )
 
 type Pez interface {
-	AsignaVector([]bool)
 	CambiaBool(int, bool) // Índice de bit a cambiar, MovimientoIndividual?. Debe actualizar fitness.
 	ObtenBool(int) bool
 	CalculaFitness()
@@ -79,16 +78,18 @@ func ComparaVectores(c * Cardumen, v []bool, r * rand.Rand) {
 				l.PushBack(j)
 			}
 		}
-		g := r.Intn(l.Len())
-		k := 0
-		for e := l.Front(); e != nil && k < g; e = e.Next() {
-			if k == g {
-				(*c).peces[i].CambiaBool(e.Value.(int), false)
-				if (*c).peces[i].Fitness() > (*c).mejor.Fitness() {
-					(*c).mejor = (*c).peces[i].Copia()
+		if l.Len() > 0 {
+			g := r.Intn(l.Len())
+			k := 0
+			for e := l.Front(); e != nil && k < g; e = e.Next() {
+				if k == g {
+					(*c).peces[i].CambiaBool(e.Value.(int), false)
+					if (*c).peces[i].Fitness() > (*c).mejor.Fitness() {
+						(*c).mejor = (*c).peces[i].Copia()
+					}
 				}
+				k++
 			}
-			k++
 		}
 	}
 }
@@ -174,15 +175,16 @@ func BFSS(itmax int, tcardumen int, tvector int, s float64, thresc float64, thre
 	c.tvector = tvector
 	r := rand.New(rand.NewSource(seed))
 	si := s
-	// tv := thresv
+	tv := thresv
 	InicializarCardumen(&c, tcardumen, crea, r)
 	for paro.Condicion() {
 		MovimientoIndividual(&c, si, r)
 		AlimentaPeces(&c)
 		MovColectivoInstintivo(&c, thresc, r)
-		MovColectivoVolitivo(&c, thresv, r)
+		MovColectivoVolitivo(&c, tv, r)
 		si -= s / float64(itmax)
-		// tv -= thresv / float64(itmax)
+		tv -= thresv / float64(itmax)
 	}
+	fmt.Print("Resultado ")
 	fmt.Println(c.mejor.Str())
 }

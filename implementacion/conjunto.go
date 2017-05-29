@@ -3,6 +3,7 @@ package peces
 import (
 	h "github.com/andreagonz/peces/heuristica"
 	"math"
+	"strconv"
 )
 
 type Conjunto struct {
@@ -11,6 +12,7 @@ type Conjunto struct {
 	peso float64
 	dfitness float64
 	suma int
+	tamanio int
 }
 
 type CondicionParo struct {
@@ -22,13 +24,20 @@ type CreaConjunto struct {
 }
 
 func (c * CreaConjunto) Pez(v []bool) h.Pez {
-	return &Conjunto{vector : v}
+	t := 0
+	for i := 0; i < len(v); i++ {
+		if v[i] {
+			t++
+		}
+	}
+	return &Conjunto{vector : v, tamanio: t}
 }
 
 func (c * CondicionParo) Condicion() bool {
 	//danger
-	if mejorSuma == suma ||
-		c.Iteracion > c.Itmax {
+	// if mejorSuma == suma ||
+	// c.Iteracion > c.Itmax {
+	if c.Iteracion > c.Itmax {
 		return false
 	}
 	c.Iteracion++
@@ -68,16 +77,14 @@ func MaxMin() {
 	max = int(math.Max(float64(smax), float64(maxi)))
 }
 
-func (c * Conjunto) AsignaVector(v []bool) {
-	c.vector = v
-}
-
 func (c * Conjunto) CambiaBool(i int, b bool) {
 	nf := 0.0
 	c.vector[i] = !c.vector[i]
 	if c.vector[i] {
+		c.tamanio++
 		c.suma += numeros[i]
 	} else {
+		c.tamanio--
 		c.suma -= numeros[i]
 	}	
 
@@ -93,8 +100,10 @@ func (c * Conjunto) CambiaBool(i int, b bool) {
 			c.dfitness = 0.0
 			c.vector[i] = !c.vector[i]
 			if c.vector[i] {
+				c.tamanio++
 				c.suma += numeros[i]
 			} else {
+				c.tamanio--
 				c.suma -= numeros[i]
 			}
 		}
@@ -145,20 +154,25 @@ func (c Conjunto) Peso() float64 {
 
 func (c Conjunto) Copia() h.Pez {
 	v := make([]bool, len(c.vector))
-	nuevo := Conjunto{v, c.fitness, c.peso, c.dfitness, c.suma}
+	for i := 0; i < len(c.vector); i++ {
+		v[i] = c.vector[i]
+	}
+	nuevo := Conjunto{v, c.fitness, c.peso, c.dfitness, c.suma, c.tamanio}
 	return &nuevo
 }
 
 func (c Conjunto) Str() string {
-	s := "{"
+	s := "["
+	j := 0
 	for i := 0; i < len(c.vector); i++ {
 		if c.vector[i] {
-			s += string(numeros[i])
-			if i < len(c.vector) - 1 {
-				s += ", "
+			s += strconv.Itoa(numeros[i])
+			if j < c.tamanio - 1 {
+				s += " "
 			}
+			j++
 		}
 	}
-	s += "} suma: " + string(c.suma)
+	s += "] suma: " + strconv.Itoa(c.suma) + ", tamaño: " + strconv.Itoa(c.tamanio)
 	return s
 }
