@@ -185,6 +185,7 @@ func BFSS(itmax int, tcardumen int, tvector int, s float64, thresc float64, thre
 		si -= s / float64(itmax)
 		tv -= thresv / float64(itmax)
 	}
-	fmt.Print("Resultado ")
+	
+	fmt.Print("\nResultado ")
 	fmt.Println(c.mejor.Str())
 }

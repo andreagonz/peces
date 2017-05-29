@@ -3,12 +3,15 @@ package main
 import(
 	h "github.com/andreagonz/peces/heuristica"
 	i "github.com/andreagonz/peces/implementacion"
+	p "github.com/andreagonz/peces/prueba"
 	"fmt"
 )
 
 func main() {
-	s := -5
-	c := []int{15, 22, 14, 26, 32, 9, 16, 8, -43, -30, 0, -1, 2, 23, -12, 4, -4, 33, -33}
+	// s := -5
+	// c := []int{15, 22, 14, 26, 32, 9, 16, 8, -43, -30, 0, -1, 2, 23, -12, 4, -4, 33, -33}
+	c := p.Conjunto
+	s := 5385
 	itmax := 100
 	tcardumen := 100
 	stepi := 0.5
@@ -19,6 +22,8 @@ func main() {
 	crea := i.CreaConjunto{}
 	fmt.Print("Conjunto inicial ")
 	fmt.Println(c)
+	fmt.Print("Tamaño de conjunto: ")
+	fmt.Println(len(c))
 	fmt.Print("Suma: ")
 	fmt.Println(s)
 	i.SetSuma(s)
