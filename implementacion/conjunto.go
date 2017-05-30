@@ -8,7 +8,7 @@ import (
 )
 
 var numeros []int
-var suma, max, min, mejorSuma int
+var suma, maxDif int
 
 type Conjunto struct {
 	vector []bool
@@ -71,8 +71,9 @@ func MaxMin() {
 			maxi = numeros[i]
 		}
 	}
-	min = int(math.Min(float64(smin), float64(mini)))
-	max = int(math.Max(float64(smax), float64(maxi)))
+	dmax := math.Abs(float64(smax - suma))
+	dmin := math.Abs(float64(smin - suma))
+	maxDif = int(math.Max(dmax, dmin))
 }
 
 func (c * Conjunto) CambiaBool(i int, b bool) {
@@ -87,7 +88,7 @@ func (c * Conjunto) CambiaBool(i int, b bool) {
 	}	
 
 	dif := math.Abs(float64(c.suma - suma))
-	dif = (dif - float64(min)) / float64((max - min))	
+	dif = dif / float64(maxDif)
 	nf = 1 - dif
 	
 	if b {
@@ -108,10 +109,6 @@ func (c * Conjunto) CambiaBool(i int, b bool) {
 	} else {
 		c.fitness = nf
 	}
-
-	if math.Abs(float64(c.suma - suma)) < float64(mejorSuma) {
-		mejorSuma = c.suma
-	}
 }
 
 func (c Conjunto) ObtenBool(i int) bool {
@@ -127,11 +124,8 @@ func (c * Conjunto) CalculaFitness() {
 	}
 	c.suma = s
 	dif := math.Abs(float64(s - suma))
-	dif = (dif - float64(min)) / float64((max - min))
+	dif = dif / float64(maxDif)
 	c.fitness = 1 - dif
-	if math.Abs(float64(c.suma - suma))  < float64(mejorSuma) {
-		mejorSuma = c.suma
-	}
 }
 
 func (c Conjunto) Fitness() float64 {
@@ -174,5 +168,5 @@ func (c Conjunto) Str() string {
 		}
 	}
 	buffer.WriteString("] suma: " + strconv.Itoa(c.suma) + ", tamaño: " + strconv.Itoa(c.tamanio))
-	return buffer.String()
+	return "\nMejor suma encontrada: " + strconv.Itoa(c.suma) + "\nTamaño de conjunto: " + strconv.Itoa(c.tamanio) + "\nFitness: " + strconv.FormatFloat(c.fitness, 'f', -1, 64)
 }

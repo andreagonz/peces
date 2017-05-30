@@ -38,11 +38,11 @@ func main() {
 	seed := int64(4)	
 	cparo := i.CondicionParo{0, itmax}
 	crea := i.CreaConjunto{}
-	fmt.Print("Conjunto inicial ")
-	fmt.Println(c)
-	fmt.Print("Tamaño de conjunto: ")
+	// fmt.Print("Conjunto inicial ")
+	// fmt.Println(c)
+	fmt.Print("Tamaño de conjunto inicial: ")
 	fmt.Println(len(c))
-	fmt.Print("Suma: ")
+	fmt.Print("Suma a buscar: ")
 	fmt.Println(s)
 	i.SetSuma(s)
 	i.SetNumeros(c)
