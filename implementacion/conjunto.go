@@ -3,8 +3,12 @@ package peces
 import (
 	h "github.com/andreagonz/peces/heuristica"
 	"math"
+	"bytes"
 	"strconv"
 )
+
+var numeros []int
+var suma, max, min, mejorSuma int
 
 type Conjunto struct {
 	vector []bool
@@ -33,19 +37,13 @@ func (c * CreaConjunto) Pez(v []bool) h.Pez {
 	return &Conjunto{vector : v, tamanio: t}
 }
 
-func (c * CondicionParo) Condicion() bool {
-	//danger
-	// if mejorSuma == suma ||
-	// c.Iteracion > c.Itmax {
-	if c.Iteracion > c.Itmax {
+func (cp * CondicionParo) Condicion(c h.Cardumen) bool {
+	if c.Mejor.(*Conjunto).suma == suma ||
+		c.Iteracion > c.Itmax {
 		return false
 	}
-	c.Iteracion++
 	return true
 }
-
-var numeros []int
-var suma, max, min, mejorSuma int
 
 func SetNumeros(n []int) {
 	numeros = n
@@ -162,17 +160,19 @@ func (c Conjunto) Copia() h.Pez {
 }
 
 func (c Conjunto) Str() string {
-	s := "["
 	j := 0
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
 	for i := 0; i < len(c.vector); i++ {
 		if c.vector[i] {
-			s += strconv.Itoa(numeros[i])
+			s := strconv.Itoa(numeros[i])
 			if j < c.tamanio - 1 {
 				s += " "
 			}
+			buffer.WriteString(s)
 			j++
 		}
 	}
-	s += "] suma: " + strconv.Itoa(c.suma) + ", tamaño: " + strconv.Itoa(c.tamanio)
-	return s
+	buffer.WriteString("] suma: " + strconv.Itoa(c.suma) + ", tamaño: " + strconv.Itoa(c.tamanio))
+	return buffer.String()
 }

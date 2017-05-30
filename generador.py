@@ -1,13 +1,22 @@
 import random
-
-v = []
+ 
 random.seed(0)
-for x in range(1000):
-    v.append(random.randint(-10000, 10000))
-print(list(set(v)))
+d = {}
+x = 0
+while x < 10000:
+    r = random.randint(-4000000, 4000000)
+    if d.get(r, None) == None:
+        k = {r : r}
+        d.update(k)
+        x += 1
 
 s = 0
-for x in range(len(v)):
+st = "{"
+for k, v in d.items():
+    st += str(v) + ", "
     if random.random() > 0.8:
-        s += v[x]
+        s += v
+         
+st = st[:len(st) - 2] + "}"
+print(st)
 print(s)

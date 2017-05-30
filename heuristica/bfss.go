@@ -21,13 +21,15 @@ type Pez interface {
 
 type Cardumen struct {
 	peces []Pez
-	mejor Pez
+	Mejor Pez
 	tvector int
-	peso float64	
+	peso float64
+	Iteracion int
+	Itmax int
 }
 
 type Paro interface {
-	Condicion() bool
+	Condicion(Cardumen) bool
 }
 
 type Crea interface {
@@ -48,10 +50,10 @@ func InicializarCardumen(c * Cardumen, tcardumen int, crea Crea, r * rand.Rand) 
 		p.CalculaFitness()
 		(*c).peces[i] = p
 		if i == 0 {
-			(*c).mejor = p.Copia()
+			(*c).Mejor = p.Copia()
 		} else {
-			if (*c).mejor.Fitness() < p.Fitness() {
-				(*c).mejor = p.Copia()
+			if (*c).Mejor.Fitness() < p.Fitness() {
+				(*c).Mejor = p.Copia()
 			}
 		}
 	}
@@ -64,8 +66,8 @@ func MovimientoIndividual(c * Cardumen, s float64,  r * rand.Rand) {
 				(*c).peces[x].CambiaBool(y, true)
 			}
 		}
-		if (*c).peces[x].Fitness() > (*c).mejor.Fitness() {
-			(*c).mejor = (*c).peces[x].Copia()
+		if (*c).peces[x].Fitness() > (*c).Mejor.Fitness() {
+			(*c).Mejor = (*c).peces[x].Copia()
 		}
 	}
 }
@@ -84,8 +86,8 @@ func ComparaVectores(c * Cardumen, v []bool, r * rand.Rand) {
 			for e := l.Front(); e != nil && k < g; e = e.Next() {
 				if k == g {
 					(*c).peces[i].CambiaBool(e.Value.(int), false)
-					if (*c).peces[i].Fitness() > (*c).mejor.Fitness() {
-						(*c).mejor = (*c).peces[i].Copia()
+					if (*c).peces[i].Fitness() > (*c).Mejor.Fitness() {
+						(*c).Mejor = (*c).peces[i].Copia()
 					}
 				}
 				k++
@@ -173,19 +175,22 @@ func AlimentaPeces(c * Cardumen) {
 func BFSS(itmax int, tcardumen int, tvector int, s float64, thresc float64, thresv float64, seed int64, paro Paro, crea Crea) {
 	var c Cardumen
 	c.tvector = tvector
+	c.Itmax = itmax
+	c.Iteracion = 0
 	r := rand.New(rand.NewSource(seed))
 	si := s
 	tv := thresv
 	InicializarCardumen(&c, tcardumen, crea, r)
-	for paro.Condicion() {
+	for paro.Condicion(c) {
 		MovimientoIndividual(&c, si, r)
 		AlimentaPeces(&c)
 		MovColectivoInstintivo(&c, thresc, r)
 		MovColectivoVolitivo(&c, tv, r)
 		si -= s / float64(itmax)
 		tv -= thresv / float64(itmax)
+		c.Iteracion++
 	}
 	
 	fmt.Print("\nResultado ")
-	fmt.Println(c.mejor.Str())
+	fmt.Println(c.Mejor.Str())
 }
