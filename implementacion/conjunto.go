@@ -20,8 +20,6 @@ type Conjunto struct {
 }
 
 type CondicionParo struct {
-	Iteracion int
-	Itmax int
 }
 
 type CreaConjunto struct {
