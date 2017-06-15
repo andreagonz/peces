@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math"
 	"container/list"
-	// g "github.com/andreagonz/peces/gui"
+	u "github.com/andreagonz/peces/util"
 )
 
 type Pez interface {
@@ -17,7 +17,7 @@ type Pez interface {
 	AsignaPeso(float64)
 	Peso() float64
 	Copia() Pez
-	Str() string
+	Str(bool) string
 }
 
 type Cardumen struct {
@@ -196,5 +196,6 @@ func BFSS(itmax int, tcardumen int, tvector int, s float64, pind float64, thresc
 		c.Iteracion++
 	}
 	fmt.Print("\nResultado ")
-	fmt.Println(c.Mejor.Str())
+	fmt.Println(c.Mejor.Str(false))
+	u.EscribeArchivo(c.Mejor.Str(true), "subconjunto.res")
 }

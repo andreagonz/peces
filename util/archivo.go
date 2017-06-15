@@ -23,6 +23,7 @@ func EscribeArchivo(s string, nombre string) {
 // LeeArchivo lee un archivo y lo regresa como cadena.
 func LeeArchivo(nom string) string {
 	if _, err := os.Stat(nom); os.IsNotExist(err) {
+		check(err)
 		return ""
 	}
 	dat, err := ioutil.ReadFile(nom)

@@ -3,6 +3,7 @@ package peces
 import (
 	h "github.com/andreagonz/peces/heuristica"
 	"math"
+	"bytes"
 	"strconv"
 )
 
@@ -82,7 +83,7 @@ func (c * Conjunto) CambiaBool(i int, b bool) {
 	} else {
 		c.Tamanio--
 		c.Suma -= numeros[i]
-	}	
+	}
 
 	dif := math.Abs(float64(c.Suma - suma))
 	dif = dif / float64(maxDif)
@@ -106,6 +107,10 @@ func (c * Conjunto) CambiaBool(i int, b bool) {
 	} else {
 		c.fitness = nf
 	}
+	if c.Tamanio == 0 {
+		c.CambiaBool(i, false);
+	}
+
 }
 
 func (c Conjunto) ObtenBool(i int) bool {
@@ -150,6 +155,22 @@ func (c Conjunto) Copia() h.Pez {
 	return &nuevo
 }
 
-func (c Conjunto) Str() string {
+func (c Conjunto) Str(b bool) string {
+	if b {
+		j := 0
+		var buffer bytes.Buffer
+		buffer.WriteString("Suma: " + strconv.Itoa(c.Suma) + ", Tamaño: " + strconv.Itoa(c.Tamanio) + ", Fitness: " + strconv.FormatFloat(c.fitness, 'f', -1, 64) + "\n")
+		for i := 0; i < len(c.Vector); i++ {
+			if c.Vector[i] {
+				s := strconv.Itoa(numeros[i])
+				if j < c.Tamanio - 1 {
+					s += ", "
+				}
+				buffer.WriteString(s)
+				j++
+			}
+		}
+		return buffer.String()
+	}
 	return "\nMejor suma encontrada: " + strconv.Itoa(c.Suma) + "\nTamaño de conjunto: " + strconv.Itoa(c.Tamanio) + "\nFitness: " + strconv.FormatFloat(c.fitness, 'f', -1, 64)
 }

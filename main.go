@@ -43,40 +43,18 @@ func main() {
 		
 		cparo := i.CondicionParo{}
 		crea := i.CreaConjunto{}
+
+		i.SetSuma(suma)
+		i.SetNumeros(conjunto)
+		i.MaxMin()
+		
 		if !bgui {
 			fmt.Print("Tamaño de conjunto inicial: ")
 			fmt.Println(len(conjunto))
 			fmt.Print("Suma a buscar: ")
 			fmt.Println(suma)
-		} 
-		i.SetSuma(suma)
-		i.SetNumeros(conjunto)
-		i.MaxMin()
-		// h.BFSS(itmax, tcardumen, len(conjunto), stepi, thresc, thresv, seed, &cparo, &crea)
-		
-		if !bgui {
-			var c h.Cardumen
-			c.Tvector = len(conjunto)
-			c.Itmax = itmax
-			c.Iteracion = 0
-			si := stepi
-			tv := thresv
-
-			h.InicializarCardumen(&c, tcardumen, &crea, r)
-			for cparo.Condicion(c) {
-				h.MovimientoIndividual(&c, si, pind, r)
-				h.AlimentaPeces(&c)
-				h.MovColectivoInstintivo(&c, thresc, r)
-				h.MovColectivoVolitivo(&c, tv, r)
-				si -= stepi / float64(itmax)
-				tv -= thresv / float64(itmax)
-				c.Iteracion++
-			}
-			fmt.Print("\nResultado ")
-			fmt.Println(c.Mejor.Str())
-		}
-
-		if bgui {
+			h.BFSS(itmax, tcardumen, len(conjunto), stepi, pind, thresc, thresv, seed, &cparo, &crea)
+		} else {
 			flag.Parse()
 			astilog.SetLogger(astilog.New(astilog.FlagConfig()))
 			
@@ -147,6 +125,7 @@ func main() {
 							w.Send(bootstrap.MessageOut{Name: "iteracion", Payload: p})
 						}
 						w.Send(bootstrap.MessageOut{Name: "terminado", Payload: nil})
+						u.EscribeArchivo(c.Mejor.Str(true), "subconjunto.res")
 						break
 					}
 				},
