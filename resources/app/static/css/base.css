@@ -1,0 +1,70 @@
+html, body {
+    background-color: #333;
+    color: #fff;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-family: Arial;
+}
+
+.wrapper {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+.content {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    padding:50px;
+}
+
+.cuadro {
+    width: 10px;
+    height:10px;
+    border: solid black;
+}
+
+.cuadro .seleccionado {    
+    background: blue;
+}
+
+#fitness {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+#subconjunto {
+    margin: 10px;
+}
+
+.elemento {
+    height: 3px;
+    width: 2px;
+    background: white;
+    float: left;
+}
+
+.in {
+    background: orange;
+    color: orange;
+    border-radius: 2px;
+}
+
+.ejemplo {
+    background: white;
+    border-radius: 2px;
+}
+
+#boton {
+    background: white;
+    border-radius: 3px;
+    height: 30px;
+    border: 1px solid gray;
+}
+
+.tag  {
+    font-weight: bold;
+}

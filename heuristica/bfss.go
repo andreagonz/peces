@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"container/list"
+	// g "github.com/andreagonz/peces/gui"
 )
 
 type Pez interface {
@@ -20,9 +21,9 @@ type Pez interface {
 }
 
 type Cardumen struct {
-	peces []Pez
+	Peces []Pez
 	Mejor Pez
-	tvector int
+	Tvector int
 	peso float64
 	Iteracion int
 	Itmax int
@@ -37,10 +38,10 @@ type Crea interface {
 }
 
 func InicializarCardumen(c * Cardumen, tcardumen int, crea Crea, r * rand.Rand) {
-	(*c).peces = make([]Pez, tcardumen)
+	(*c).Peces = make([]Pez, tcardumen)
 	for i := 0; i < tcardumen; i++ {
-		v := make([]bool, (*c).tvector)
-		for j := 0; j < (*c).tvector; j++ {
+		v := make([]bool, (*c).Tvector)
+		for j := 0; j < (*c).Tvector; j++ {
 			in := r.Intn(2)
 			if in == 1 {
 				v[j] = true
@@ -48,7 +49,7 @@ func InicializarCardumen(c * Cardumen, tcardumen int, crea Crea, r * rand.Rand) 
 		}
 		p := crea.Pez(v)
 		p.CalculaFitness()
-		(*c).peces[i] = p
+		(*c).Peces[i] = p
 		if i == 0 {
 			(*c).Mejor = p.Copia()
 		} else {
@@ -59,24 +60,28 @@ func InicializarCardumen(c * Cardumen, tcardumen int, crea Crea, r * rand.Rand) 
 	}
 }
 
-func MovimientoIndividual(c * Cardumen, s float64,  r * rand.Rand) {
-	for x := 0; x < len((*c).peces); x++ {
-		for y := 0; y < (*c).tvector; y++ {
+func MovimientoIndividual(c * Cardumen, s float64,  p float64, r * rand.Rand) {
+	for x := 0; x < len((*c).Peces); x++ {
+		for y := 0; y < (*c).Tvector; y++ {
 			if r.Float64() < s {
-				(*c).peces[x].CambiaBool(y, true)
+				if r.Float64() < p {
+					(*c).Peces[x].CambiaBool(y, false)
+				} else {
+					(*c).Peces[x].CambiaBool(y, true)
+				}
 			}
 		}
-		if (*c).peces[x].Fitness() > (*c).Mejor.Fitness() {
-			(*c).Mejor = (*c).peces[x].Copia()
+		if (*c).Peces[x].Fitness() > (*c).Mejor.Fitness() {
+			(*c).Mejor = (*c).Peces[x].Copia()
 		}
 	}
 }
 
 func ComparaVectores(c * Cardumen, v []bool, r * rand.Rand) {
-	for i := 0; i < len((*c).peces); i++ {
+	for i := 0; i < len((*c).Peces); i++ {
 		l := list.New()
 		for j := 0; j < len(v); j++ {
-			if v[j] != (*c).peces[i].ObtenBool(j) {
+			if v[j] != (*c).Peces[i].ObtenBool(j) {
 				l.PushBack(j)
 			}
 		}
@@ -85,9 +90,9 @@ func ComparaVectores(c * Cardumen, v []bool, r * rand.Rand) {
 			k := 0
 			for e := l.Front(); e != nil && k < g; e = e.Next() {
 				if k == g {
-					(*c).peces[i].CambiaBool(e.Value.(int), false)
-					if (*c).peces[i].Fitness() > (*c).Mejor.Fitness() {
-						(*c).Mejor = (*c).peces[i].Copia()
+					(*c).Peces[i].CambiaBool(e.Value.(int), false)
+					if (*c).Peces[i].Fitness() > (*c).Mejor.Fitness() {
+						(*c).Mejor = (*c).Peces[i].Copia()
 					}
 				}
 				k++
@@ -97,15 +102,15 @@ func ComparaVectores(c * Cardumen, v []bool, r * rand.Rand) {
 }
 
 func MovColectivoInstintivo(c * Cardumen, thresc float64, r * rand.Rand) {
-	v := make([]float64, (*c).tvector)
+	v := make([]float64, (*c).Tvector)
 	df := 0.0
-	for i := 0; i < len((*c).peces); i++ {
-		for j := 0; j < (*c).tvector; j++ {
-			if (*c).peces[i].ObtenBool(j) {
-				v[j] += float64((*c).peces[i].DFitness())
+	for i := 0; i < len((*c).Peces); i++ {
+		for j := 0; j < (*c).Tvector; j++ {
+			if (*c).Peces[i].ObtenBool(j) {
+				v[j] += float64((*c).Peces[i].DFitness())
 			}
 		}
-		df += (*c).peces[i].DFitness()
+		df += (*c).Peces[i].DFitness()
 	}
 	max := 0.0
 	for i := 0; i < len(v); i++ {
@@ -125,15 +130,15 @@ func MovColectivoInstintivo(c * Cardumen, thresc float64, r * rand.Rand) {
 }
 
 func MovColectivoVolitivo(c * Cardumen, thresv float64,  r * rand.Rand) {
-	b := make([]float64, (*c).tvector)
+	b := make([]float64, (*c).Tvector)
 	w := 0.0
-	for i := 0; i < len((*c).peces); i++ {
-		for j := 0; j < (*c).tvector; j++ {
-			if (*c).peces[i].ObtenBool(j) {
-				b[j] += float64((*c).peces[i].Peso())
+	for i := 0; i < len((*c).Peces); i++ {
+		for j := 0; j < (*c).Tvector; j++ {
+			if (*c).Peces[i].ObtenBool(j) {
+				b[j] += float64((*c).Peces[i].Peso())
 			}
 		}
-		w += (*c).peces[i].Peso()
+		w += (*c).Peces[i].Peso()
 	}
 	max := 0.0
 	for i := 0; i < len(b); i++ {
@@ -161,20 +166,20 @@ func MovColectivoVolitivo(c * Cardumen, thresv float64,  r * rand.Rand) {
 
 func AlimentaPeces(c * Cardumen) {
 	mfd := 0.0
-	for x := 0; x < len((*c).peces); x++ {
-		if mfd < math.Abs((*c).peces[x].Peso()) {
-			mfd = math.Abs((*c).peces[x].Peso())
+	for x := 0; x < len((*c).Peces); x++ {
+		if mfd < math.Abs((*c).Peces[x].Peso()) {
+			mfd = math.Abs((*c).Peces[x].Peso())
 		}
 	}
-	for x := 0; x < len((*c).peces); x++ {
-		w := (*c).peces[x].Peso() + (*c).peces[x].DFitness() / math.Abs(mfd)
-		(*c).peces[x].AsignaPeso(w)
+	for x := 0; x < len((*c).Peces); x++ {
+		w := (*c).Peces[x].Peso() + (*c).Peces[x].DFitness() / math.Abs(mfd)
+		(*c).Peces[x].AsignaPeso(w)
 	}
 }
 
-func BFSS(itmax int, tcardumen int, tvector int, s float64, thresc float64, thresv float64, seed int64, paro Paro, crea Crea) {
+func BFSS(itmax int, tcardumen int, tvector int, s float64, pind float64, thresc float64, thresv float64, seed int64, paro Paro, crea Crea) {
 	var c Cardumen
-	c.tvector = tvector
+	c.Tvector = tvector
 	c.Itmax = itmax
 	c.Iteracion = 0
 	r := rand.New(rand.NewSource(seed))
@@ -182,7 +187,7 @@ func BFSS(itmax int, tcardumen int, tvector int, s float64, thresc float64, thre
 	tv := thresv
 	InicializarCardumen(&c, tcardumen, crea, r)
 	for paro.Condicion(c) {
-		MovimientoIndividual(&c, si, r)
+		MovimientoIndividual(&c, si, pind, r)
 		AlimentaPeces(&c)
 		MovColectivoInstintivo(&c, thresc, r)
 		MovColectivoVolitivo(&c, tv, r)
@@ -190,7 +195,6 @@ func BFSS(itmax int, tcardumen int, tvector int, s float64, thresc float64, thre
 		tv -= thresv / float64(itmax)
 		c.Iteracion++
 	}
-	
 	fmt.Print("\nResultado ")
 	fmt.Println(c.Mejor.Str())
 }

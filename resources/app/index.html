@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="static/css/base.css"/>
+        <script src="static/js/script.js"></script>
+    </head>
+    <body>
+        <div class="content">
+            <h2>Binary Fish School Search</h2>
+            <h3>Subset Sum</h3>
+            Tamaño de conjunto: <span id="conjunto"></span>
+            <br/>
+            Suma a encontrar: <span id="suma"></span>
+            <br/>
+            Tamaño de cardumen: <span id="cardumen"></span>
+            <br/><br/>
+            <button id="boton" onclick="empezar()">Empezar</button>
+            <br/><br/><br/>
+            <span class="tag">Cardumen:</span>
+            <br/><br/>
+            <div id ="peces"></div>
+            <br/>
+            <span class="tag">Fitness:</span>
+            <br/><br/>
+            <div id ="fitness"></div>
+            <br/>
+            <span class="tag">Mejor Subconjunto Encontrado (MS):</span>
+            <br/><br/>
+            Iteracion: <span id="iteracion" >0</span>
+            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+            Suma: <span id="mejor-suma" >0</span>
+            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+            Fitness: <span id="mejor-fitness" >0</span>
+            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+            Tamaño: <span id="sub-tamanio" >0</span>
+            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+            Diferencia con suma buscada: <span id="diferencia" >0</span>
+            <br/> <br/>
+            x &#x2208; MS &#x2B62; <span class="in">xx</span>
+            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;x &#x2209; MS &#x2B62;
+            <span class="ejemplo">xx</span>
+            <br/><br/>
+            <div id ="subconjunto"></div>
+        </div>
+    </body>
+</html>
