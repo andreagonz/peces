@@ -47,7 +47,8 @@ func main() {
 		i.SetSuma(suma)
 		i.SetNumeros(conjunto)
 		i.MaxMin()
-		
+
+		// Si no se va a utilizar interfaz gráfica
 		if !bgui {
 			fmt.Print("Tamaño de conjunto inicial: ")
 			fmt.Println(len(conjunto))
@@ -55,6 +56,7 @@ func main() {
 			fmt.Println(suma)
 			h.BFSS(itmax, tcardumen, len(conjunto), stepi, pind, thresc, thresv, seed, &cparo, &crea)
 		} else {
+			// Se crea la interfaz gráfica
 			flag.Parse()
 			astilog.SetLogger(astilog.New(astilog.FlagConfig()))
 			

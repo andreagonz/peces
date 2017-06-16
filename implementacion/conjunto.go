@@ -10,6 +10,7 @@ import (
 var numeros []int
 var suma, maxDif int
 
+// Conjunto representa un subconjunto del conjunto principal
 type Conjunto struct {
 	Vector []bool
 	fitness float64
@@ -19,12 +20,15 @@ type Conjunto struct {
 	Tamanio int
 }
 
+// CondicionParo es la implementación de la condición de paro
 type CondicionParo struct {
 }
 
+// CreaConjunto es la implementación para crear un conjunto
 type CreaConjunto struct {
 }
 
+// Pez crea una solución aleatoria
 func (c * CreaConjunto) Pez(v []bool) h.Pez {
 	t := 0
 	for i := 0; i < len(v); i++ {
@@ -35,6 +39,7 @@ func (c * CreaConjunto) Pez(v []bool) h.Pez {
 	return &Conjunto{Vector : v, Tamanio: t}
 }
 
+// Condición regresa el resultado de la condición de paro
 func (cp * CondicionParo) Condicion(c h.Cardumen) bool {
 	if c.Mejor.(*Conjunto).Suma == suma ||
 		c.Iteracion > c.Itmax {
@@ -43,30 +48,26 @@ func (cp * CondicionParo) Condicion(c h.Cardumen) bool {
 	return true
 }
 
+// SetNumeros asigna el arreglo de números que representa la instancia
+// del problema a la variable global numeros
 func SetNumeros(n []int) {
 	numeros = n
 }
 
+// SetSuma asigna a la variable global suma el valor de la suma a buscar
 func SetSuma(n int) {
 	suma = n
 }
 
+// MaxMin encuentra la diferencia máxima de entre las posibles sumas y la suma a buscar
 func MaxMin() {
 	smin := 0
 	smax := 0
-	mini := math.MaxInt32
-	maxi := math.MinInt32
 	for i := 0; i < len(numeros); i++ {
 		if numeros[i] < 0 {
 			smin += numeros[i]
 		} else {
 			smax += numeros[i]
-		}
-		if numeros[i] < mini {
-			mini = numeros[i]
-		}
-		if numeros[i] > maxi {
-			maxi = numeros[i]
 		}
 	}
 	dmax := math.Abs(float64(smax - suma))
@@ -74,6 +75,8 @@ func MaxMin() {
 	maxDif = int(math.Max(dmax, dmin))
 }
 
+// CambiaBool cambia el bool en la posición i del vector de c y recalcula el fitness
+// si b es true se usa elitismo, si es false no se usa elitismo
 func (c * Conjunto) CambiaBool(i int, b bool) {
 	nf := 0.0
 	c.Vector[i] = !c.Vector[i]
@@ -113,10 +116,12 @@ func (c * Conjunto) CambiaBool(i int, b bool) {
 
 }
 
+// ObtenBool obtiene el bool en la posición i del vector de c
 func (c Conjunto) ObtenBool(i int) bool {
 	return c.Vector[i]
 }
 
+// CalculaFitness calcula el fitness de c
 func (c * Conjunto) CalculaFitness() {
 	s := 0
 	for i := 0; i < len(c.Vector); i++ {
@@ -130,22 +135,27 @@ func (c * Conjunto) CalculaFitness() {
 	c.fitness = 1 - dif
 }
 
+// Fitness regresa el fitness de c
 func (c Conjunto) Fitness() float64 {
 	return c.fitness
 }
 
+// DFitness regresa la diferencia entre el fitness de la iteración anterior y la actual de c
 func (c Conjunto) DFitness() float64 {
 	return c.dfitness
 }
 
+// AsignaPeso asigna el peso p a c
 func (c * Conjunto) AsignaPeso(p float64) {
 	c.peso = p
 }
 
+// Peso regresa el peso de c
 func (c Conjunto) Peso() float64 {
 	return c.peso
 }
 
+// Copia crea un conjunto copia de c y lo regresa
 func (c Conjunto) Copia() h.Pez {
 	v := make([]bool, len(c.Vector))
 	for i := 0; i < len(c.Vector); i++ {
@@ -155,6 +165,9 @@ func (c Conjunto) Copia() h.Pez {
 	return &nuevo
 }
 
+// Str regresa una representación en cadena de c
+// si b es true, la cadena incluye el vector
+// si b es false la cadena no incluye al vector
 func (c Conjunto) Str(b bool) string {
 	if b {
 		j := 0

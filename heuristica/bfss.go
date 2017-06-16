@@ -8,6 +8,7 @@ import (
 	u "github.com/andreagonz/peces/util"
 )
 
+// Pez es una interfaz que representa una posible solución
 type Pez interface {
 	CambiaBool(int, bool) // Índice de bit a cambiar, MovimientoIndividual?. Debe actualizar fitness.
 	ObtenBool(int) bool
@@ -20,6 +21,7 @@ type Pez interface {
 	Str(bool) string
 }
 
+// Cardumen tiene el conjunto de posibles soluciones
 type Cardumen struct {
 	Peces []Pez
 	Mejor Pez
@@ -29,14 +31,17 @@ type Cardumen struct {
 	Itmax int
 }
 
+// Paro es la interfaz de la condición de paro
 type Paro interface {
 	Condicion(Cardumen) bool
 }
 
+// Crea es la interfaz que se utiliza para crear un pez
 type Crea interface {
 	Pez([]bool) Pez
 }
 
+// InicializarCardumen inicializa los valores del cardumen
 func InicializarCardumen(c * Cardumen, tcardumen int, crea Crea, r * rand.Rand) {
 	(*c).Peces = make([]Pez, tcardumen)
 	for i := 0; i < tcardumen; i++ {
@@ -60,6 +65,7 @@ func InicializarCardumen(c * Cardumen, tcardumen int, crea Crea, r * rand.Rand) 
 	}
 }
 
+// MovimientoIndividual es el operador de movimiento individual de cada pez
 func MovimientoIndividual(c * Cardumen, s float64,  p float64, r * rand.Rand) {
 	for x := 0; x < len((*c).Peces); x++ {
 		for y := 0; y < (*c).Tvector; y++ {
@@ -77,6 +83,7 @@ func MovimientoIndividual(c * Cardumen, s float64,  p float64, r * rand.Rand) {
 	}
 }
 
+// ComparaVectores compara los vectores del cardumen con un vector para modificarlos en una entrada
 func ComparaVectores(c * Cardumen, v []bool, r * rand.Rand) {
 	for i := 0; i < len((*c).Peces); i++ {
 		l := list.New()
@@ -101,6 +108,7 @@ func ComparaVectores(c * Cardumen, v []bool, r * rand.Rand) {
 	}
 }
 
+// MovColectivoInstintivo es el operador de movimiento colectivo instintivo
 func MovColectivoInstintivo(c * Cardumen, thresc float64, r * rand.Rand) {
 	v := make([]float64, (*c).Tvector)
 	df := 0.0
@@ -129,6 +137,7 @@ func MovColectivoInstintivo(c * Cardumen, thresc float64, r * rand.Rand) {
 	ComparaVectores(c, iv, r)
 }
 
+// MovColectivoVolitivo es el operador de movimiento colectivo volitivo
 func MovColectivoVolitivo(c * Cardumen, thresv float64,  r * rand.Rand) {
 	b := make([]float64, (*c).Tvector)
 	w := 0.0
@@ -164,6 +173,7 @@ func MovColectivoVolitivo(c * Cardumen, thresv float64,  r * rand.Rand) {
 	ComparaVectores(c, iv, r)
 }
 
+// AlimentaPeces es el operador de alimentación
 func AlimentaPeces(c * Cardumen) {
 	mfd := 0.0
 	for x := 0; x < len((*c).Peces); x++ {
@@ -177,6 +187,7 @@ func AlimentaPeces(c * Cardumen) {
 	}
 }
 
+// BFSS ejecuta el algoritmo de Binary Fish School Search
 func BFSS(itmax int, tcardumen int, tvector int, s float64, pind float64, thresc float64, thresv float64, seed int64, paro Paro, crea Crea) {
 	var c Cardumen
 	c.Tvector = tvector
