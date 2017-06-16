@@ -5,7 +5,7 @@ inicio = -10000
 final = 10000
 
 if len(sys.argv) < 2:
-    print("python generador.py <Num. de elementos> [Semilla] [Cota minima] [Cota maxima]")
+    print("python3 generador.py <Num. de elementos> [Semilla] [Cota minima] [Cota maxima]")
     sys.exit(0)
     
 if len(sys.argv) > 2:

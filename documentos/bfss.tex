@@ -101,6 +101,8 @@ Finalmente, \texttt{[-gui]} es un parámetro opcional que de ser utilizado mostr
     $ ./peces archivos/5.ss archivos/params1.txt -gui
 \end{verbatim}
 
+Una vez ejecutado el programa se crea el archivo \texttt{subconjunto.res} donde se muestra el mejor subconjunto resultante de la búsqueda.
+
 \newpage
 
 \section{Problema Subset Sum} \label{sec:ss}
@@ -109,7 +111,7 @@ El problema Subset Sum consiste en que se tiene un conjunto de números enteros 
 La dificultad de este problema radica en que no se conoce un algoritmo que en todos los casos nos de una solución al problema de manera eficiente, por lo que se hace uso de heurísticas para hacer aproximaciones.
 
 \section{Heurística Binary Fish School Search } \label{sec:bfss} 
-Esta heurística está basada en el movimiento de los peces en cardumenes que van en busca de comida. Cada pez representa una solución candidata al problema y tiene asociado un peso y un fitness. Cuando un pez encuentra un lugar con lugar con alimento abundante (una buena solución que determinará al fitness de este pez), su peso aumenta en proporción a la cantidad de alimento (el fitness) utilizndo un \textbf{operador de alimentación}. Hay tres tipos de movimientos en la heurística, cada uno representa un operador:
+Esta heurística está basada en el movimiento de los peces en cardumenes que van en busca de comida. Cada pez representa una solución candidata al problema y tiene asociado un $peso$ y un $fitness$. Cuando un pez encuentra un lugar con alimento abundante (una buena solución que determinará al fitness de este pez), su peso aumenta en proporción a la cantidad de alimento (el fitness) utilizando un \textbf{operador de alimentación}. Hay tres tipos de movimientos en la heurística, cada uno representa un operador:
 \begin{itemize}
 \item \textbf{Movimiento individual:} Cada pez se mueve aleatoriamente.
 \item \textbf{Movimiento colectivo instintivo:} El cardumen sigue a los peces con más fitness.
@@ -147,6 +149,9 @@ Un cardumen $Car$ es un arreglo de peces, cada pez $p_i \in Car$ tiene asignado 
 
 \subsubsection{Función de fitness}
 Para cada pez $p_i \in Car$, dado $S_i$ (que como se había indicado previamente es el subconjunto de $C$ que representa $p_i$), sea $sum_i = \sum\limits_{x \in S_i}x$ y $sum$ la suma que se quiere aproximar lo más posible, el fitness $f_i$ de $p_i$ se definió como $f_i = 1 - \frac{|sum_i - sum|}{max_{\Delta}}$ donde $max_{\Delta} = max\{\Delta_{max}, \Delta_{min}\}$ y a su vez $\Delta_{max}$ es la diferencia entre la mayor suma posible (de elementos del conjunto $C$) y $sum$, análogamente $\Delta_{min}$ es la diferencia entre la menor suma posible y $sum$.
+
+\subsubsection{Condición de paro}
+La condición de paro consiste simplemente en que el programa se detenga cuando se llegue a cierto número de iteraciones o se encuentra algún subconjunto con la suma buscada.
 
 \subsubsection{Inicialización de posiciones}
 La posición inicial de cada pez $p_i$ se inicializa de manera aleatoria, dado $v_i$ de $p_i$, cada entrada $v_{ij}$ se decide con la siguiente función:
@@ -223,14 +228,98 @@ $thres_v(t)$ al igual que $step_{ind}(t)$ disminuye mientras $t$ aumenta. Defini
 \end{equation*}
 
 \section{Ejemplo de la ejecución de una instancia}
+Al ejecutar el comando
+\begin{verbatim}
+    $ ./peces archivos/5.ss archivos/params1.txt
+\end{verbatim}
+
+se imprime en terminal los siguientes resultados
+\begin{verbatim}
+Tamaño de conjunto inicial: 10000
+Suma a buscar: -11207948
+
+Resultado 
+Mejor suma encontrada: -11207946
+Tamaño de conjunto: 4996
+Fitness: 0.9999999998025653
+\end{verbatim}
+
+y en el archivo \texttt{subconjunto.res} se guarda el mejor subconjunto encontrado. \\
+
+Al ejecutar
+
+\begin{verbatim}
+    $ ./peces archivos/4.ss archivos/params1.txt -gui
+\end{verbatim}
+
+se abre la interfaz gráfica y se muestra lo siguiente: \\
+\includegraphics[scale=0.262]{media/gui} \\
+
+donde los peces representan el cardumen y el color de cada pez su fitness, mientras más grises sean los peces peor será su fitness. La franja color naranja y blanco representa el conjunto de la instancia del problema, los cuadros de color naranja representan los elementos que están en el mejor subconjunto encontrado y los de color blanco los que no. 
 
 \section{Experimentación}
 
-Se usó el programa \texttt{otros/generador.py} para imprimir instancias del problema, se 
+Se usó el programa \texttt{otros/generador.py} para crear instancias del problema. Para utilizarlo se debe ejecutar de la siguiente manera.
+\begin{verbatim}
+    $ python3 generador.py <Num. de elementos> [Semilla] [Cota minima] [Cota maxima]
+\end{verbatim}
+
+donde \texttt{<Num. de elementos>} es el número de elementos que se quiere meter en el conjunto. \texttt{[Semilla] [Cota minima] y [Cota maxima]} son parámetros opcionales, respectivamente son la semilla que se utilizará para el generador pseudoaleatorio, la cota mínima de los números a meter en el conjunto y la cota máxima. Por defecto la semilla es 0, la cota mínima es -10000 y la máxima es 10000. \\
+
+Para hacer los experimentos se utilizó una computadora con las características
+\begin{verbatim}
+Memoria RAM: 7.7GiB 
+Procesador: Intel® Core™ i7-3630QM CPU @ 2.40GHz x 8 
+\end{verbatim}
+
+Los archivos utilizados se encuentran en la carpeta \texttt{archivos/}. \\
+Primero se corrió el programa con conjuntos ``densos'', es decir, conjuntos cuyos elementos cubren un rango de números sin dejar muchos espacios entre sí. Se probó con conjuntos de 967, 19864, 40000 y 100000 (\texttt{1.ss}, \texttt{2.ss}, \texttt{3.ss} y \texttt{4.ss} respectivamente) elementos, cada conjunto se corrió 100 veces con distintas semillas (de 0 a 99), con los parámetros \texttt{params1.txt}, es decir: \\
+
+$Número\ de\ iteraciones$: 100 \\
+$Tamaño\ de\ cardumen$: 49 \\
+$step_{ind}$: 0.9 \\
+$prob_{ind}$: 0.001 \\
+$thres_c$: 0.9 \\
+$thres_v$: 0.9 \\
+
+Los resultados fueron que en todos los casos se encontró el subconjunto con la suma deseada. El tiempo que tomó ejecutar las 100 semillas para cada conjunto fue:
+
+\begin{itemize}
+\item 967 elementos : 3.184 seg
+\item 19864 elementos : 34.248 seg
+\item 40000 elementos : 1 min 13.033 seg
+\item 100000 elementos : 2 min 18.694 seg
+\end{itemize}
+
+Como este tipo de conjuntos no son muy interesantes, se probó el programa con conjuntos menos ``densos'', como el del archivo \texttt{5.ss}, que tiene 10000 elementos. Primero se probó con los parámetros de \texttt{params1.txt}, al igual que en el caso anterior se corrieron 100 semillas. El tiempo de ejecución fue mayor que en los casos anteriores (tardó 12 min 45.458 seg en correr las 100 semillas) ya que en algunos casos no se alcanzó la suma, por lo que se tuvo que realizar todas las iteraciones. La siguiente gráfica muestra la distancia entre la suma que se quiere encontrar y la mejor suma encontrada con respecto a las semillas utilizadas en cada ejecución: \\
+
+\begin{center}
+  \includegraphics[scale=0.6]{media/5p1} \\
+\end{center}
+
+Recordemos que se le agregó el parámetro $prob_{ind}$ a la heruística original. Cuando éste se omite (se hace 0, usando \texttt{params2.txt}), entonces tenemos resultados muy diferentes a los anteriores, empezando por el tiempo de ejecución, que fue mayor (tardó 17 min 39.119 seg en correr 100 semillas):
+
+\hspace*{-2cm}  \includegraphics[scale=0.6]{media/5p2} \\
+
+Vemos una variación mucho mayor entre la diferencia de sumas. \\
+
+Por último se corrió un conjunto con 50000 elementos (\texttt{6.ss}) con 50 semillas distintas utlizando \texttt{params1.txt}, lo cual tomó 32 min 37.75 seg. Este conjunto consiste de números entre -10,000,000 y 10,000,000. Se generó la siguiente gráfica:
+
+\begin{center}
+  \includegraphics[scale=0.6]{media/6p1} \\
+\end{center}
+
+Todas estas imágenes se encuentran guardadas en la carpeta \texttt{documentos/media}.
 
 \section{Análisis de resultados}
+Los conjuntos que llamamos ``densos'' tuvieron resultados muy buenos, incluso con un conjunto tan grande como el de 100000 elementos se logró encontrar la suma buscada con todas las semillas y en muy poco tiempo. Con conjuntos menos ``densos'' se logró también tener resultados muy buenos al añadir el parámetro $prob_{ind}$, sin éste la diferencia entre la suma buscada y la mejor encontrada puede variar mucho más, ya que no se permite que se haga mucha exploración en el espacio de búsqueda.
 
 \section{Conclusiones}
+Si tuviera que resolver el problema Subset Sum en la vida real, definitivamente usaría la heurística BFSS, ya que se desempeñó muy bien incluso con conjuntos muy grandes y no tan ``densos''. Me sorpendió que se lograra obtener tan buenos resultados con tal sólo 49 peces en 100 iteraciones, ya que en mi experiencia con otras heurísticas, para obtener resultados decentes se necesita de al menos 1000 iteraciones y una población de mínimo 200 individuos o partículas, claro que todo depende del problema que se esté resolviendo, al parecer BFSS funciona muy bien para Subset Sum pero podría ser muy malo para otro tipo de problemas. \\
+
+Sobre la implementación del proyecto, el programar la heurística no dio problemas mayores, y la función de costo fue fácil de crear ya que se sabe cuál es el resultado que se busca, a diferencia de otros problemas. \\
+
+La parte de la implementación que se me complicó más fue la interfaz gráfica, ya que los proyectos de Go destinados a este fin no están completos o incluso abandonados, por la razón de que se destinan más recursos al desarrollo web. Por suerte encontré un proyecto para creación de interfaces gráficas en Go que es sencillo de usar y tiene las cosas básicas necesarias, que aunque parece que podría dificultarse su uso para proyectos más grandes, para un proyecto pequeño como este no causó tantos problemas, además de que la creación de la vista es muy fácil ya que se utiliza CSS, HTML y Javascript.
 
 \begin{thebibliography}{99}
 
@@ -241,5 +330,10 @@ Se usó el programa \texttt{otros/generador.py} para imprimir instancias del pro
   Noviembre 2013. \\
   \url{https://fenix.tecnico.ulisboa.pt/downloadFile/395146003739/disserta%C3%A7%C3%A3o.pdf}
   \end{thebibliography}
+
+  
+\begin{figure}[b]
+  \includegraphics[scale=4, right]{media/gopherswim.jpg} \\
+\end{figure}
 
 \end{document}
